@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    networks:
+      - docker_network_ai
+    volumes:
+      - docker_data_storage_ai:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - docker_network_ai
+  
+  server:
+    build:
+      context: server
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    networks:
+      - docker_network_ai
+
+  client:
+    build:
+      context: client
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    networks:
+      - docker_network_ai
+
+networks:
+  docker_network_ai:
+
+volumes:
+  docker_data_storage_ai:
